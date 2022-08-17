@@ -2,8 +2,67 @@ function dom(params) {
     return document.querySelector(params);
 }
 
+// =========== Contructors nhân viên =================
+function NhanVien(account, name, email, password, date, salary, position, hour) {
+    this.account = account;
+    this.name = name;
+    this.email = email;
+    this.password = password;
+    this.date = date;
+    this.salary = salary;
+    this.position = position;
+    this.hour = hour;
+}
+
+NhanVien.prototype.sumSalary = function () {
+    let current = new Intl.NumberFormat("vn-VN");
+    if (this.position === "Sếp") {
+        return current.format(this.salary * 3) + " VNĐ";
+    }
+    if (this.position === "Trưởng phòng") {
+        return current.format(this.salary * 2) + " VNĐ";
+    }
+    else {
+        return current.format(this.salary * 1) + " VNĐ";
+    }
+}
+
+// 
+NhanVien.prototype.rate = function () {
+    if (this.hour >= 192) {
+        return "Xuất sắc"
+    }
+    if (this.hour >= 176) {
+        return "Giỏi"
+    }
+    if (this.hour >= 160) {
+        return "Khá"
+    }
+    else {
+        return "Trung bình"
+    }
+}
+// =====================================
+
 // =====================================
 let nhanViens = [];
+init();
+
+function init() {
+    // Lấy dữ liệu từ localStorage
+    nhanViens = JSON.parse(localStorage.getItem("nhanVien")) || [];
+    nhanViens = nhanViens.map((nhanVien) => {
+        return new NhanVien(nhanVien.account, nhanVien.name, nhanVien.email, nhanVien.password,
+            nhanVien.date, nhanVien.salary, nhanVien.position, nhanVien.hour);
+    })
+    console.log(nhanViens);
+    display(nhanViens);
+}
+
+// Button thêm mới nhân viên
+dom("#btnThem").onclick = () => {
+    return resetInput();
+}
 
 // Thêm mới nhân viên
 function addNV() {
@@ -17,11 +76,18 @@ function addNV() {
         position = dom("#chucvu").value,
         hour = dom("#gioLam").value;
 
-    // tạo object nhan vien
+    let isValid = validateForm();
+    // Kiểm tra nếu form không hợp lệ => kết thúc hàm
+    if (!isValid) {
+        return;
+    }
+
+    // tạo object nhan viên
     let nhanVien = new NhanVien(account, name, email, password, date, salary, position, hour);
 
     // Thêm nhân viên vào danh sách
     nhanViens.push(nhanVien);
+    localStorage.setItem("nhanVien", JSON.stringify(nhanViens));
 
     resetInput();
 
@@ -30,7 +96,7 @@ function addNV() {
 }
 
 // select nhan vien
-function edit(account) {
+function selecterNV(account) {
     let nhanVien = nhanViens.find((result) => {
         return account === result.account;
     })
@@ -46,17 +112,18 @@ function edit(account) {
         dom("#luongCB").value = nhanVien.salary,
         dom("#chucvu").value = nhanVien.position,
         dom("#gioLam").value = nhanVien.hour;
-
+    // Disable input taikhoan và nút thêm nhân viên
     dom("#tknv").disabled = true;
     dom("#btnThemNV").disabled = true;
 }
 
 // Xóa nhân viên
 function deleteNV(params) {
-    nhanVien = nhanViens.filter((nhanVien) => {
+    nhanViens = nhanViens.filter((nhanVien) => {
         return params !== nhanVien.account;
     })
-    display(nhanVien);
+    localStorage.setItem("nhanVien", JSON.stringify(nhanViens));
+    display(nhanViens);
 }
 
 // Cập nhật nhân viên
@@ -67,9 +134,15 @@ function updateNV() {
         email = dom("#email").value,
         password = dom("#password").value,
         date = dom("#datepicker").value,
-        salary = dom("#luongCB").value,
+        salary = dom("#luongCB").value * 1,
         position = dom("#chucvu").value,
-        hour = dom("#gioLam").value;
+        hour = dom("#gioLam").value * 1;
+
+    let isValid = validateForm();
+    // Kiểm tra nếu form không hợp lệ => kết thúc hàm
+    if (!isValid) {
+        return;
+    }
 
     // tạo object nhan vien
     let nhanVien = new NhanVien(account, name, email, password, date, salary, position, hour);
@@ -77,6 +150,7 @@ function updateNV() {
     let index = nhanViens.findIndex((item) => item.account === nhanVien.account)
     nhanViens[index] = nhanVien;
 
+    localStorage.setItem("nhanVien", JSON.stringify(nhanViens));
     display(nhanViens);
 
     resetInput();
@@ -98,48 +172,6 @@ dom("#btnTimNV").onclick = function () {
 }
 // =====================================
 
-// Contructors nhân viên
-function NhanVien(account, name, email, password, date, salary, position, hour) {
-    this.account = account;
-    this.name = name;
-    this.email = email;
-    this.password = password;
-    this.date = date;
-    this.salary = salary;
-    this.position = position;
-    this.hour = hour;
-}
-
-NhanVien.prototype.sumSalary = function () {
-    let current = new Intl.NumberFormat("vn-VN");
-    if (this.position === "Sếp") {
-        return current.format(this.salary * 3)+" VNĐ";
-    }
-    if (this.position === "Trưởng phòng") {
-        return current.format(this.salary * 2)+" VNĐ";
-    }
-    else {
-        return current.format(this.salary * 1)+" VNĐ";
-    }
-}
-
-// 
-NhanVien.prototype.rate = function () {
-    if (this.hour >= 192) {
-        return "Xuất sắc"
-    }
-    if (this.hour >= 176) {
-        return "Giỏi"
-    }
-    if (this.hour >= 160) {
-        return "Khá"
-    }
-    else {
-        return "Trung bình"
-    }
-}
-// =====================================
-
 // Xuất ra màn hình 
 function display(params) {
     let html = params.reduce((result, nhanVien) => {
@@ -152,7 +184,7 @@ function display(params) {
         <td>${nhanVien.sumSalary()}</td>
         <td>${nhanVien.rate()}</td>
         <td>
-            <button onclick="edit('${nhanVien.account}')" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Edit</button>
+            <button onclick="selecterNV('${nhanVien.account}')" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Edit</button>
             <button onclick="deleteNV('${nhanVien.account}')" class="btn btn-danger">Delete</button>     
         </td> 
         </tr>`
@@ -168,6 +200,7 @@ function resetInput() {
         dom("#password").value = "",
         dom("#datepicker").value = "",
         dom("#luongCB").value = "",
-        dom("#chucvu").value = "",
+        dom("#chucvu").value = "Chọn chức vụ",
         dom("#gioLam").value = "";
 }
+
