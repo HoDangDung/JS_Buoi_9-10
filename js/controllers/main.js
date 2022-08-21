@@ -27,7 +27,6 @@ NhanVien.prototype.sumSalary = function () {
     }
 }
 
-// 
 NhanVien.prototype.rate = function () {
     if (this.hour >= 192) {
         return "Xuất sắc"
@@ -58,6 +57,8 @@ function init() {
     console.log(nhanViens);
     display(nhanViens);
 }
+
+
 
 // Button thêm mới nhân viên
 dom("#btnThem").onclick = () => {
