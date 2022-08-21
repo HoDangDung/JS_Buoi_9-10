@@ -146,7 +146,7 @@ function display(params) {
         <td>${nhanVien.sumSalary()}</td>
         <td>${nhanVien.rate()}</td>
         <td>
-            <button onclick="selecterNV('${nhanVien.account}')" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Edit</button>
+            <button onclick="selecterNV('${nhanVien.account}')" class="btn btn-primary mb-2" data-toggle="modal" data-target="#myModal">Edit</button>
             <button onclick="deleteNV('${nhanVien.account}')" class="btn btn-danger">Delete</button>     
         </td> 
         </tr>`
