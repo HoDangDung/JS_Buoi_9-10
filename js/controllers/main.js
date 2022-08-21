@@ -21,6 +21,8 @@ function init() {
 
 // Button thêm mới nhân viên
 dom("#btnThem").onclick = () => {
+    dom("#tknv").disabled = false;
+    dom("#btnThemNV").disabled = false;
     return resetInput();
 }
 
