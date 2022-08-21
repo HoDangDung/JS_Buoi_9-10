@@ -160,7 +160,7 @@ function resetInput() {
         dom("#name").value = "",
         dom("#email").value = "",
         dom("#password").value = "",
-        dom("#datepicker").value = "",
+        dom("#datepicker").value = $('#datepicker').val(output),
         dom("#luongCB").value = "",
         dom("#chucvu").value = "Chọn chức vụ",
         dom("#gioLam").value = "";
